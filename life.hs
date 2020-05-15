@@ -9,6 +9,10 @@ gridMap = map.map
 gridZip :: [[a]] -> [[b]] -> [[(a, b)]]
 gridZip = zipWith zip 
 
+-- gridZipWithPlus
+gzwp :: Num c => [[c]] -> [[c]] -> [[c]]
+gzwp = zipWith (zipWith (+))
+
 live = 1
 die = 0
 zs = replicate 15 0
@@ -17,11 +21,11 @@ zs = replicate 15 0
 rulesOfLife (live, y) = if y==3 || y==4 then live else die
 rulesOfLife (_, y)    = if y==3 then live else die
 
-generate x = (gridMap) rulesOfLife (gridZip x u)
-    where y = zipWith (zipWith (+)) x (zs:x)
-    w = transpose $ zipWith (zipWith (+)) y ((tail x)++[zs])
-    v = zipWith (zipWith (+)) w (zs:w)
-    u = transpose $ zipWith (zipWith (+)) v ((tail w)++[zs])
+generate x = gridMap rulesOfLife (gridZip x u)
+             where y = gzwp x (zs:x)
+                   w = transpose $ gzwp y ((tail x)++[zs])
+                   v = gzwp w (zs:w)
+                   u = transpose $ gzwp v ((tail w)++[zs])
 
 -- "pi" seed
 x = [zs,zs,zs,zs,zs,zs,[0,0,0,0,0,0,1,1,1,0,0,0,0,0,0],[0,0,0,0,0,0,1,0,1,0,0,0,0,0,0],[0,0,0,0,0,0,1,0,1,0,0,0,0,0,0],zs,zs,zs,zs,zs,zs]
