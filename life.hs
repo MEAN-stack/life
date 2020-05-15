@@ -9,15 +9,13 @@ gridMap = map.map
 gridZip :: [[a]] -> [[b]] -> [[(a, b)]]
 gridZip = zipWith zip 
 
-alive = 1
 live = 1
 die = 0
-dead = 0
 
 zs = replicate 15 0
 
 -- Conway's rules
-rulesOfLife (alive, y) = if y==3 || y==4 then live else die
+rulesOfLife (live, y) = if y==3 || y==4 then live else die
 rulesOfLife (_, y)     = if y==3 then live else die
 
 generate x = (gridMap) rulesOfLife (gridZip x u)
