@@ -24,7 +24,7 @@ generate x = (gridMap) rulesOfLife (gridZip x u)
     v = zipWith (zipWith (+)) w (zs:w)
     u = transpose $ zipWith (zipWith (+)) v ((tail w)++[zs])
 
--- seed
+-- "pi" seed
 x = [zs,zs,zs,zs,zs,zs,[0,0,0,0,0,0,1,1,1,0,0,0,0,0,0],[0,0,0,0,0,0,1,0,1,0,0,0,0,0,0],[0,0,0,0,0,0,1,0,1,0,0,0,0,0,0],zs,zs,zs,zs,zs,zs]
 
 m (x, y) = (x, fromIntegral (y `mod` 15), fromIntegral (y `div` 15))
