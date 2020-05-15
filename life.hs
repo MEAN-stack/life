@@ -14,32 +14,20 @@ live = 1
 die = 0
 dead = 0
 
+zs = replicate 15 0
+
 -- Conway's rules
 rulesOfLife (alive, y) = if y==3 || y==4 then live else die
 rulesOfLife (_, y)     = if y==3 then live else die
 
 generate x = (gridMap) rulesOfLife (gridZip x u)
-    where y = zipWith (zipWith (+)) x ([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]:x)
-    w = transpose $ zipWith (zipWith (+)) y ((tail x)++[[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]])
-    v = zipWith (zipWith (+)) w ([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]:w)
-    u = transpose $ zipWith (zipWith (+)) v ((tail w)++[[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]])
+    where y = zipWith (zipWith (+)) x (zs:x)
+    w = transpose $ zipWith (zipWith (+)) y ((tail x)++[zs])
+    v = zipWith (zipWith (+)) w (zs:w)
+    u = transpose $ zipWith (zipWith (+)) v ((tail w)++[zs])
 
-x = [
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,1,1,0,0,0],
-  [0,0,0,0,0,0,1,1,0,1,0,0,0,0,0],
-  [0,0,0,0,0,1,1,1,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,1,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
+-- seed
+x = [zs,zs,zs,zs,zs,zs,[0,0,0,0,0,0,1,1,1,0,0,0,0,0,0],[0,0,0,0,0,0,1,0,1,0,0,0,0,0,0],[0,0,0,0,0,0,1,0,1,0,0,0,0,0,0],zs,zs,zs,zs,zs,zs]
 
 m (x, y) = (x, fromIntegral (y `mod` 15), fromIntegral (y `div` 15))
 
