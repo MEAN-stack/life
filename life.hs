@@ -3,9 +3,8 @@ module Main(main) where
 import Graphics.Gloss
 import Data.List
 
-gen (x,y) = if x==1
-            then if y==3 || y==4 then 1 else 0
-            else if y==3 then 1 else 0
+gen (1,y) = if y==3 || y==4 then 1 else 0
+gen (_,y) = if y==3 then 1 else 0
 
 gen1 x = (map.map) gen (zipWith zip x u)
          where y = zipWith (zipWith (+)) x ([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]:x)
