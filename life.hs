@@ -11,7 +11,6 @@ gridZip = zipWith zip
 
 live = 1
 die = 0
-
 zs = replicate 15 0
 
 -- Conway's rules
