@@ -15,7 +15,7 @@ zs = replicate 15 0
 
 -- Conway's rules
 rulesOfLife (live, y) = if y==3 || y==4 then live else die
-rulesOfLife (_, y)     = if y==3 then live else die
+rulesOfLife (_, y)    = if y==3 then live else die
 
 generate x = (gridMap) rulesOfLife (gridZip x u)
     where y = zipWith (zipWith (+)) x (zs:x)
