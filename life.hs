@@ -3,14 +3,26 @@ module Main(main) where
 import Graphics.Gloss
 import Data.List
 
-gen (1,y) = if y==3 || y==4 then 1 else 0
-gen (_,y) = if y==3 then 1 else 0
+gridMap :: (a -> b) -> [[a]] -> [[b]]
+gridMap = map.map
 
-gen1 x = (map.map) gen (zipWith zip x u)
-         where y = zipWith (zipWith (+)) x ([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]:x)
-               w = transpose $ zipWith (zipWith (+)) y ((tail x)++[[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]])
-               v = zipWith (zipWith (+)) w ([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]:w)
-               u = transpose $ zipWith (zipWith (+)) v ((tail w)++[[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]])
+gridZip :: [[a]] -> [[b]] -> [[(a, b)]]
+gridZip = zipWith zip 
+
+alive = 1
+live = 1
+die = 0
+dead = 0
+
+-- Conway's rules
+rulesOfLife (alive, y) = if y==3 || y==4 then live else die
+rulesOfLife (_, y)     = if y==3 then live else die
+
+generate x = (gridMap) rulesOfLife (gridZip x u)
+    where y = zipWith (zipWith (+)) x ([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]:x)
+    w = transpose $ zipWith (zipWith (+)) y ((tail x)++[[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]])
+    v = zipWith (zipWith (+)) w ([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]:w)
+    u = transpose $ zipWith (zipWith (+)) v ((tail w)++[[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]])
 
 x = [
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -37,4 +49,4 @@ drawer x = pictures $ map d z
                  d (0,col,row) = translate ((col-15)*15) ((15-row)*15) $ color white $ rectangleSolid 26 26
                  d (_,col,row) = translate ((col-15)*15) ((15-row)*15) $ color black $ rectangleSolid 26 26
 
-main = simulate (InWindow "Life" (500, 500) (10, 10)) white 10 x drawer (\_ dt x -> gen1 x)
+main = simulate (InWindow "Life" (500, 500) (10, 10)) white 10 x drawer (\_ dt x -> generate x)
