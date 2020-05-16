@@ -1,41 +1,47 @@
-module Main(main) where
-
 import Graphics.Gloss
 import Data.List
+import System.IO
 
-gridMap :: (a -> b) -> [[a]] -> [[b]]
 gridMap = map.map
-
-gridZip :: [[a]] -> [[b]] -> [[(a, b)]]
-gridZip = zipWith zip 
-
--- gridZipWithPlus
-gzwp :: Num c => [[c]] -> [[c]] -> [[c]]
+gridZip = zipWith zip
 gzwp = zipWith (zipWith (+))
-
 live = 1
 die = 0
-zs = replicate 15 0
 
--- Conway's rules
 rulesOfLife (1, y) = if y==3 || y==4 then live else die
-rulesOfLife (_, y)    = if y==3 then live else die
+rulesOfLife (0, 3)    = live
+rulesOfLife (_, _)    = die
+
+l = 100 :: Int
+l2 = 50
 
 generate x = gridMap rulesOfLife (gridZip x u)
              where y = gzwp x (zs:x)
                    w = transpose $ gzwp y ((tail x)++[zs])
                    v = gzwp w (zs:w)
                    u = transpose $ gzwp v ((tail w)++[zs])
+                   zs = replicate l 0
 
--- "pi" seed
-x = [zs,zs,zs,zs,zs,zs,[0,0,0,0,0,0,1,1,1,0,0,0,0,0,0],[0,0,0,0,0,0,1,0,1,0,0,0,0,0,0],[0,0,0,0,0,0,1,0,1,0,0,0,0,0,0],zs,zs,zs,zs,zs,zs]
-
-m (x, y) = (x, fromIntegral (y `mod` 15), fromIntegral (y `div` 15))
+m (x, y) = (x, fromIntegral (y `mod` l), fromIntegral (y `div` l))
 
 drawer x = pictures $ map d z
            where y = zip (concat x) [0..]
                  z = map m y
-                 d (0,col,row) = translate ((col-15)*15) ((15-row)*15) $ color white $ rectangleSolid 26 26
-                 d (_,col,row) = translate ((col-15)*15) ((15-row)*15) $ color black $ rectangleSolid 26 26
+                 d (0,col,row) = translate ((col-l2)*10) ((l2-row)*10) $ color white $ rectangleSolid 8 8
+                 d (_,col,row) = translate ((col-l2)*10) ((l2-row)*10) $ color black $ rectangleSolid 8 8
 
-main = simulate (InWindow "Life" (500, 500) (10, 10)) white 10 x drawer (\_ dt x -> generate x)
+extend :: [[Int]] -> [[Int]]
+extend = transpose . map ext . transpose . map ext
+
+ext :: [Int] -> [Int]
+ext x = (replicate len1 0) ++ x ++ (replicate len2 0)
+        where len = length x
+              len1 = (l - len) `div` 2
+              len2 = l - len - len1
+
+main = do
+    handle <- openFile "seed.txt" ReadMode
+    contents <- hGetContents handle
+    let x = extend $ gridMap (\s -> if s=="0" then 0 else 1) $ map words $ lines contents
+    simulate (InWindow "Life" (l*10, l*10) (10, 10)) white 25 x drawer (\_ dt x -> generate x)
+    hClose handle
