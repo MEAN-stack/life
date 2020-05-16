@@ -57,13 +57,15 @@ generate x = gridMap rulesOfLife (gridZip x u)
 -- Draw the array of cells
 -- First flatten the array and convert each cell value to a triple
 -- (val, x, y) where (x,y) are the coordinates of the cell
+-- filter out the inhabited cells
+-- draw each cell as a black rectangle
 -- 
 drawer :: [[Int]] -> Picture
-drawer x = pictures $ map d z
+drawer x = pictures $ map d zz
            where y = zip (concat x) [0..]
                  m (x, y) = (x, fromIntegral (y `mod` l), fromIntegral (y `div` l))
                  z = map m y
-                 d (0,col,row) = translate ((col-l2)*10) ((l2-row)*10) $ color white $ rectangleSolid 8 8
+                 zz = filter (\(v,x,y) -> v==1) z
                  d (_,col,row) = translate ((col-l2)*10) ((l2-row)*10) $ color black $ rectangleSolid 8 8
 
 extend :: [[Int]] -> [[Int]]
@@ -74,6 +76,7 @@ ext x = (replicate len1 0) ++ x ++ (replicate len2 0)
         where len = length x
               len1 = (l - len) `div` 2
               len2 = l - len - len1
+              
 main :: IO ()
 main = do
     handle <- openFile "seed.txt" ReadMode
