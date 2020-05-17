@@ -20,8 +20,11 @@ ghc life.hs
 ```
 ./life
 ```
-## Changing the Starting configuration
-
-Just edit seed.txt
+## Starting configuration
 
 The contents are centred and padded out with empty cells to an array of size 100 x 100
+The given configuration is [Gosper Glider Gun](https://www.conwaylife.com/wiki/Gosper_glider_gun)
+
+### Changing the Starting configuration
+
+Just edit seed.txt
