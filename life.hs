@@ -68,15 +68,25 @@ drawer x = pictures $ map d zz
                  zz = filter (\(v,x,y) -> v==1) z
                  d (_,col,row) = translate ((col-l2)*10) ((l2-row)*10) $ color black $ rectangleSolid 8 8
 
+-- Extend a 2-D array in all directions
+-- 
 extend :: [[Int]] -> [[Int]]
 extend = transpose . map ext . transpose . map ext
 
+-- extend a 1-D array to left and right
+-- 
 ext :: [Int] -> [Int]
 ext x = (replicate len1 0) ++ x ++ (replicate len2 0)
         where len = length x
               len1 = (l - len) `div` 2
               len2 = l - len - len1
-              
+
+-- Read the seed from a file.
+-- Convert it to an array of 1s and 0s
+-- Extend the array in all directions with 0s to a size of 100 x 100
+-- 
+-- Start an animation, drawing the cells for each generation of life
+--
 main :: IO ()
 main = do
     handle <- openFile "seed.txt" ReadMode
