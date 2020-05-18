@@ -5,7 +5,7 @@ import Data.List
 import System.IO
 
 -- helper functions for 2D arrays [[Int]]
--- map, zip, and zipWith(+)
+-- map, zip, and zipWith
 -- 
 gridMap :: (a -> b) -> [[a]] -> [[b]]
 gridMap = map.map
@@ -13,8 +13,8 @@ gridMap = map.map
 gridZip :: [[a]] -> [[b]] -> [[(a, b)]]
 gridZip = zipWith zip
 
-gzwp :: Num c => [[c]] -> [[c]] -> [[c]]
-gzwp = zipWith (zipWith (+))
+gridZipWith :: (a -> b -> c) -> [[a]] -> [[b]] -> [[c]]
+gridZipWith f = zipWith (zipWith f)
 
 -- the rules of life
 -- 
@@ -48,10 +48,10 @@ l2 = 50
 -- 
 generate :: [[Int]] -> [[Int]]
 generate x = gridMap rulesOfLife (gridZip x u)
-             where y = gzwp x (zs:x)
-                   w = transpose $ gzwp y ((tail x)++[zs])
-                   v = gzwp w (zs:w)
-                   u = transpose $ gzwp v ((tail w)++[zs])
+             where y = gridZipWith (+) x (zs:x)
+                   w = transpose $ gridZipWith (+) y ((tail x)++[zs])
+                   v = gridZipWith (+) w (zs:w)
+                   u = transpose $ gridZipWith (+) v ((tail w)++[zs])
                    zs = replicate l 0
 
 -- Draw the array of cells
