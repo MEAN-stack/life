@@ -35,7 +35,7 @@ rulesOfLife (_, _) = die
 -- The game takes place in a square grid of size l
 --
 l = 100 :: Int
-l2 = 50
+l2 = l `div` 2
 
 -- Spawn the next generation
 -- map each cell to its neighbour count
